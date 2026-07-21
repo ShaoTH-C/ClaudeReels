@@ -1,0 +1,6 @@
+state.json
+state.txt
+reels.log
+*.bak-reels
+Thumbs.db
+.DS_Store
