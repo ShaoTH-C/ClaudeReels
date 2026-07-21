@@ -1,6 +1,8 @@
 state.json
 state.txt
 reels.log
+CLAUDE.md
+TODO.md
 *.bak-reels
 Thumbs.db
 .DS_Store
