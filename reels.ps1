@@ -40,7 +40,6 @@ function Get-State {
         enabled = $enabled
         site    = if ($raw -and $raw.site) { [string]$raw.site } else { 'instagram' }
         url     = if ($raw -and $raw.url)  { [string]$raw.url }  else { '' }
-        port    = if ($raw -and $raw.port) { [int]$raw.port }    else { 0 }
     }
 }
 
@@ -88,13 +87,12 @@ function Get-ReelsProcs {
 
 function Test-Open { [bool](Get-ReelsProcs) }
 
-# port is read back off the live command line so it survives a lost//stale state file
+# read off the live command line rather than stored: keeps state.json write-only
+# for explicit user actions, so an async hook can't clobber a site change
 function Get-ReelsPort {
     foreach ($p in Get-ReelsProcs) {
         if ($p.CommandLine -match '--remote-debugging-port=(\d+)') { return [int]$Matches[1] }
     }
-    $s = Get-State
-    if ($s.port) { return [int]$s.port }
     return 0
 }
 
@@ -217,9 +215,6 @@ function Open-Window {
     if (-not $exe) { Start-Process $cur.Url; return }
 
     $port = Get-FreePort
-    $st = Get-State
-    $st.port = $port
-    Set-State $st
 
     Add-Type -AssemblyName System.Windows.Forms
     $wa = [System.Windows.Forms.Screen]::PrimaryScreen.WorkingArea
